@@ -1,0 +1,68 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:pixeledit2.ViewModels"
+        xmlns:views="using:pixeledit2.Views"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="600"
+        x:Class="pixeledit2.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Monochrome Pixel Art Editor"
+        Background="#F0F0F0">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid ColumnDefinitions="250, *">
+        <!-- Sidebar -->
+        <Border Grid.Column="0" Background="White" BorderBrush="#CCCCCC" BorderThickness="0,0,1,0">
+            <ScrollViewer>
+                <StackPanel Margin="15" Spacing="15">
+                    <TextBlock Text="Preview (1:1)" FontWeight="Bold"/>
+                    <Border BorderBrush="#CCCCCC" BorderThickness="1" HorizontalAlignment="Left">
+                        <views:PixelCanvas CurrentSprite="{Binding CurrentSprite}"
+                                          IsPreview="True"/>
+                    </Border>
+
+                    <Separator/>
+
+                    <TextBlock Text="Dimensions" FontWeight="Bold"/>
+                    <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto" ColumnSpacing="10" RowSpacing="5">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Width"/>
+                        <NumericUpDown Grid.Row="1" Grid.Column="0" Value="{Binding NewWidth}" Minimum="8" Maximum="1024"/>
+                        
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="Height"/>
+                        <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding NewHeight}" Minimum="8" Maximum="64"/>
+                    </Grid>
+
+                    <Button Content="Create New" Command="{Binding NewCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                    
+                    <Separator/>
+
+                    <Button Content="Invert Canvas" Command="{Binding InvertCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                    <Button Content="Save JSON" Command="{Binding SaveCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                    <Button Content="Load JSON" Command="{Binding LoadCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                    <Button Content="Export PNG" Command="{Binding ExportCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#007AFF" Foreground="White"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Main Canvas Area -->
+        <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <Viewbox Stretch="None" Margin="40">
+                <Border BorderBrush="#999999" BorderThickness="1">
+                    <views:PixelCanvas Name="MainCanvas"
+                                      CurrentSprite="{Binding CurrentSprite}"
+                                      IsPreview="False"/>
+                </Border>
+            </Viewbox>
+        </ScrollViewer>
+    </Grid>
+    
+    <Window.Resources>
+        <!-- Simple converter for canvas scaling if needed, but we'll handle scaling in the control -->
+    </Window.Resources>
+
+</Window>
