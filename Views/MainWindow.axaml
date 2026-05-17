@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:pixeledit2.ViewModels"
         xmlns:views="using:pixeledit2.Views"
+        xmlns:conv="using:pixeledit2.Converters"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="600"
@@ -15,6 +16,32 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
+    <Window.Resources>
+        <conv:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
+    </Window.Resources>
+
+    <Window.Styles>
+        <Style Selector="Button">
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="RadioButton">
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button.ExportButton">
+            <Setter Property="Background" Value="#007AFF"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button.ExportButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#0062CC"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.ExportButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#0056b3"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </Window.Styles>
+
     <Grid ColumnDefinitions="250, *">
         <!-- Sidebar -->
         <Border Grid.Column="0" Background="White" BorderBrush="#CCCCCC" BorderThickness="0,0,1,0">
@@ -24,6 +51,16 @@
                     <Border BorderBrush="#CCCCCC" BorderThickness="1" HorizontalAlignment="Left">
                         <views:PixelCanvas CurrentSprite="{Binding CurrentSprite}"
                                           IsPreview="True"/>
+                    </Border>
+
+                    <Separator/>
+
+                    <TextBlock Text="Tools" FontWeight="Bold"/>
+                    <Border Background="#E0E0E0" CornerRadius="4" Padding="5">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <RadioButton Content="Pen" IsChecked="{Binding CurrentTool, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static vm:DrawingTool.Pen}}"/>
+                            <RadioButton Content="Eraser" IsChecked="{Binding CurrentTool, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static vm:DrawingTool.Eraser}}"/>
+                        </StackPanel>
                     </Border>
 
                     <Separator/>
@@ -44,7 +81,7 @@
                     <Button Content="Invert Canvas" Command="{Binding InvertCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
                     <Button Content="Save JSON" Command="{Binding SaveCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
                     <Button Content="Load JSON" Command="{Binding LoadCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
-                    <Button Content="Export PNG" Command="{Binding ExportCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="#007AFF" Foreground="White"/>
+                    <Button Content="Export PNG" Command="{Binding ExportCommand}" Classes="ExportButton" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
                 </StackPanel>
             </ScrollViewer>
         </Border>
@@ -61,8 +98,4 @@
         </ScrollViewer>
     </Grid>
     
-    <Window.Resources>
-        <!-- Simple converter for canvas scaling if needed, but we'll handle scaling in the control -->
-    </Window.Resources>
-
 </Window>

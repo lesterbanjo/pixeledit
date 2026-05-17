@@ -51,26 +51,68 @@ public class SpriteModel
         Grid = new bool[height, width];
     }
 
-    public void Invert()
+    public SpriteModel Inverted()
     {
+        var newSprite = new SpriteModel(Width, Height);
         for (int y = 0; y < Height; y++)
         {
             for (int x = 0; x < Width; x++)
             {
-                Grid[y, x] = !Grid[y, x];
+                newSprite.Grid[y, x] = !Grid[y, x];
             }
         }
+        return newSprite;
     }
 
-    public void SaveJson(string filePath)
+    public SpriteModel Resized(int newWidth, int newHeight)
     {
+        var newSprite = new SpriteModel(newWidth, newHeight);
+        int copyWidth = Math.Min(Width, newWidth);
+        int copyHeight = Math.Min(Height, newHeight);
+
+        for (int y = 0; y < copyHeight; y++)
+        {
+            for (int x = 0; x < copyWidth; x++)
+            {
+                newSprite.Grid[y, x] = Grid[y, x];
+            }
+        }
+        return newSprite;
+    }
+
+    public SpriteModel Toggled(int x, int y)
+    {
+        var newSprite = new SpriteModel(Width, Height);
+        Array.Copy(Grid, newSprite.Grid, Grid.Length);
+        if (x >= 0 && x < Width && y >= 0 && y < Height)
+        {
+            newSprite.Grid[y, x] = !newSprite.Grid[y, x];
+        }
+        return newSprite;
+    }
+
+    public SpriteModel WithPixel(int x, int y, bool value)
+    {
+        var newSprite = new SpriteModel(Width, Height);
+        Array.Copy(Grid, newSprite.Grid, Grid.Length);
+        if (x >= 0 && x < Width && y >= 0 && y < Height)
+        {
+            newSprite.Grid[y, x] = value;
+        }
+        return newSprite;
+    }
+
+    public void SaveJson(Stream stream)
+    {
+        using var writer = new StreamWriter(stream);
         var json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(filePath, json);
+        writer.Write(json);
     }
 
-    public static SpriteModel? LoadJson(string filePath)
+    public static SpriteModel? LoadJson(Stream stream)
     {
-        var json = File.ReadAllText(filePath);
+        using var reader = new StreamReader(stream);
+        var json = reader.ReadToEnd();
         return JsonSerializer.Deserialize<SpriteModel>(json);
     }
 }

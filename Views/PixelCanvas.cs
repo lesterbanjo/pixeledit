@@ -119,9 +119,8 @@ public class PixelCanvas : Control
 
         if (DataContext is MainWindowViewModel vm)
         {
-            vm.TogglePixel(x, y);
+            vm.PaintPixel(x, y);
             _lastToggledPixel = (x, y);
-            InvalidateVisual();
         }
     }
 }
